@@ -54,8 +54,6 @@ public class EpicorService {
     );
 
 
-
-
     public Response fileRead(String furl) throws Exception {
         if (furl == null || furl.isBlank()) {
             furl = "https://courses.cs.washington.edu/courses/cse390c/22sp/lectures/moby.txt";
@@ -67,9 +65,9 @@ public class EpicorService {
 
         logger.info("Going to find top 5 words{}...");
 
-        Map<String, Long> countMap = countList.stream().map(w -> w.startsWith("'") ? w.substring(1): w)
-                .filter(w -> !w.isBlank() && !REMOVE_WORDS.contains(w) &&  !proNounsSet.contains(w)
-        && !conjunctionSet.contains(w) && !prePositionSet.contains(w) && !verbsSet.contains(w))
+        Map<String, Long> countMap = countList.stream().map(w -> w.startsWith("'") ? w.substring(1) : w)
+                .filter(w -> !w.isBlank() && !REMOVE_WORDS.contains(w) && !proNounsSet.contains(w)
+                        && !conjunctionSet.contains(w) && !prePositionSet.contains(w) && !verbsSet.contains(w))
                 .collect(Collectors.groupingBy(word -> word, Collectors.counting()));
 
 
@@ -100,24 +98,22 @@ public class EpicorService {
 
         Map<String, Long> top5WordsMap = countMap.entrySet().stream().
                 sorted(Map.Entry.<String, Long>comparingByValue(Comparator.reverseOrder())).limit(5).collect(Collectors.toMap(
-                Map.Entry:: getKey, Map.Entry :: getValue, (w1, w2) -> w1, LinkedHashMap::new
-        ));
+                        Map.Entry::getKey, Map.Entry::getValue, (w1, w2) -> w1, LinkedHashMap::new
+                ));
 
-        logger.info("top 5 words {} ..."+ top5WordsMap);
+        logger.info("top 5 words {} ..." + top5WordsMap);
 
 
-        Set<String> top50Set =  countMap.keySet();
+        Set<String> top50Set = countMap.keySet();
         System.out.println(top50Set.size());
 
-        /*Set<String> top50Words = countMap.keySet().stream().distinct().sorted().limit(50).collect(Collectors.toSet());
-        System.out.println("top50Words:"+top50Words);*/
 
         TreeSet<String> top50WordsSet = countMap.keySet().stream().distinct().sorted().limit(50).collect(Collectors.toCollection(TreeSet::new));
-        System.out.println("top50WordsSet:"+top50WordsSet);
+        System.out.println("top50WordsSet:" + top50WordsSet);
 
-        logger.info("top 50 unique records after Excluding conditions {} "+top50WordsSet);
+        logger.info("top 50 unique records after Excluding conditions {} " + top50WordsSet);
 
-        Response response =  new Response();
+        Response response = new Response();
         response.setCount(countList.size());
         response.setTop5Words(top5WordsMap);
         response.setTop50Words(top50WordsSet);
